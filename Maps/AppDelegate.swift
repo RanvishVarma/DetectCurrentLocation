@@ -7,14 +7,50 @@
 //
 
 import UIKit
+import UserNotifications
+import CoreLocation
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    let manager = CLLocationManager()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        if launchOptions != nil {
+            print("options")
+            if (launchOptions![UIApplicationLaunchOptionsKey.location] != nil){
+                //LocationService.sharedInstance.updateCustomerCoordinates()
+                self.manager.stopMonitoringSignificantLocationChanges()
+                let center = UNUserNotificationCenter.current()
+                let options: UNAuthorizationOptions = [.alert, .sound];
+                center.requestAuthorization(options: options) {
+                    (granted, error) in
+                    if !granted {
+                        print("Something went wrong")
+                    }
+                }
+                let content = UNMutableNotificationContent()
+                content.title = "dfgdfg"
+                content.body = "fdfgdf"
+                content.sound = UNNotificationSound.default()
+                //  let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 60,
+                // repeats: true)
+                
+                let identifier = "UYLLocalNotification"
+                let request = UNNotificationRequest(identifier: identifier,
+                                                    content: content, trigger: nil)
+                center.add(request, withCompletionHandler: { (error) in
+                    if error != nil {
+                        print("error")
+                    }
+                })
+               // LocationService.sharedInstance.getLocation()
+               // LocationService.sharedInstance.updateCustomerCoordinates()
+                
+            }
+        }
         // Override point for customization after application launch.
         return true
     }
